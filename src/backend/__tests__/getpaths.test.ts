@@ -1,0 +1,88 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
+import path from 'node:path';
+
+import { isMultiMapOf } from '@freik/containers';
+import { isString } from '@freik/typechk';
+
+import { chkPathKey } from '../../IpcTypeCheck';
+import { Path, Team } from '../../IpcTypes';
+import {
+  FindRelativeRepoRoot,
+  GetPathFiles,
+  GetTeamDirectories,
+  GetTeamPaths,
+} from '../getpaths';
+
+function getTestRepoPath(): string {
+  return path.resolve(__dirname, 'test-repo-root');
+}
+
+const originalCwd = process.cwd();
+
+beforeEach(() => {
+  // Change to a specific test directory before each test
+  process.chdir(path.resolve(__dirname, 'test-repo-root', 'docs'));
+});
+
+afterEach(() => {
+  // Always restore the original working directory so subsequent tests aren't broken
+  process.chdir(originalCwd);
+});
+
+describe('team path exploration', () => {
+  test('getRelativeRepoRoot finds the repo root', async () => {
+    const currentPath = getTestRepoPath();
+    const repoRoot = await FindRelativeRepoRoot(currentPath);
+    expect(repoRoot).toBe(currentPath);
+  });
+
+  test('getRelativeRepoRoot fails if no repo root found', async () => {
+    const invalidPath = path.resolve(
+      __dirname,
+      '../../../../../nonexistent/path',
+    );
+    console.log(invalidPath);
+    expect(await FindRelativeRepoRoot(invalidPath)).toBeNull();
+  });
+
+  test('getRelativeRoot finds the test repository root', async () => {
+    const testRepoPath = getTestRepoPath();
+    const repoRoot = await FindRelativeRepoRoot(
+      path.join(testRepoPath, 'some', 'nested', 'directory'),
+      8,
+    );
+    expect(repoRoot).toBe(testRepoPath);
+  });
+
+  test('getTeamDirectories finds team directories', async () => {
+    const repoRoot = await getTestRepoPath();
+    const teamDirs = await GetTeamDirectories();
+    expect(teamDirs).toContain('TeamA' as Team);
+    expect(teamDirs).toContain('TeamB' as Team);
+  });
+
+  test('getPathFiles finds path files', async () => {
+    const repoRoot = await getTestRepoPath();
+    const pathFiles = await GetPathFiles(repoRoot, 'TeamA');
+    expect(pathFiles.length).toBe(3);
+    expect(pathFiles).toContain('TeamTestPaths.java' as Path);
+    expect(pathFiles).toContain(
+      path.join('subdir', 'PathsLiveHere.java') as Path,
+    );
+  });
+
+  test('getPathFiles finds no path files', async () => {
+    const repoRoot = await getTestRepoPath();
+    const pathFiles = await GetPathFiles(repoRoot, 'TeamB');
+    expect(pathFiles).toEqual([]);
+  });
+
+  test('GetTeamPaths', async () => {
+    console.log(process.cwd());
+    const tp = await GetTeamPaths();
+    expect(tp).toBeDefined();
+    expect(isMultiMapOf(tp, isString, chkPathKey)).toBeTrue();
+  });
+});

@@ -12,7 +12,7 @@
     "dist"
   ],
   "scripts": {
-    "format": "prettier -w \"*.md\" \"*.json\" \"*.toml\" \"*.ts\" \"src/**/*.ts\" \"src/**/*.tsx\" \"src/**/*.md\" \"src/**/*.json\" \"src/**/*.html\" \"src/**/*.java\"",
+    "format": "prettier -w \"*.md\" \"*.json\" \"*.ts\" \"src/**/*.ts\" \"src/**/*.tsx\" \"src/**/*.md\" \"src/**/*.json\" \"src/**/*.html\" \"src/**/*.java\"",
     "types": "tsc --noEmit",
     "check": "bun run types && bun test",
     "dev": "bun run dev/entry.js",

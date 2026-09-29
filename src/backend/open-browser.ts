@@ -1,0 +1,28 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+import * as child_proc from 'node:child_process';
+
+type BufStr = string | Buffer;
+
+export function OpenBrowser(url: string): void {
+  let command = '';
+  const plat = process.platform;
+  if (/^darwin/.test(plat)) {
+    command = 'open';
+  } else if (/^win/.test(plat)) {
+    command = 'start';
+  } else if (/^linux/.test(plat)) {
+    command = 'xdg-open';
+  } else {
+    console.error(`Don't know how to launch a browser for platform: ${plat}`);
+    return;
+  }
+  child_proc.exec(
+    command + ' ' + url,
+    (err, stdout: BufStr, stderr: BufStr) => {
+      if (err !== null && err !== undefined) {
+        console.error(`Couldn't launch a browser: ${JSON.stringify(err)}`);
+      }
+    },
+  );
+}
