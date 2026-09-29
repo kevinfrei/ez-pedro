@@ -1,7 +1,7 @@
 {
-  "name": "@freik/pedroviz",
-  "version": "0.2.2",
-  "repository": "https://github.com/kevinfrei/pedroviz.git",
+  "name": "@freik/ez-pedro",
+  "version": "0.0.1",
+  "repository": "https://github.com/kevinfrei/ez-pedro.git",
   "author": "Kevin Frei <kevinfrei@hotmail.com>",
   "license": "AGPL-3.0-or-later",
   "type": "module",
@@ -12,7 +12,7 @@
     "dist"
   ],
   "scripts": {
-    "format": "prettier -w \"src/**/*.ts\" \"src/**/*.tsx\" \"*.md\" \"*.json\" \"src/**/*.md\" \"src/**/*.json\" \"src/*.html\" \"src/server/**/*.java\"",
+    "format": "prettier -w \"*.md\" \"*.json\" \"*.toml\" \"*.ts\" \"src/**/*.ts\" \"src/**/*.tsx\" \"src/**/*.md\" \"src/**/*.json\" \"src/**/*.html\" \"src/**/*.java\"",
     "types": "tsc --noEmit",
     "check": "bun run types && bun test",
     "dev": "bun run dev/entry.js",

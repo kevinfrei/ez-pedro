@@ -1,0 +1,8 @@
+[serve.static]
+env = "BUN_PUBLIC_*"
+
+[test]
+root = "./src"
+coverage = true
+coverageSkipTestFiles = true
+preload = ["./src/client/__tests__/ui-preload.test.ts"]
